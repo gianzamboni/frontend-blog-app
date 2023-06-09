@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
-import { BlogPost } from './blog-post.js';
+import { BlogPost } from './components/blog-post.js';
+import { AuthorService } from './services/blog-post-service.js';
 
 const logo = new URL('../assets/open-wc-logo.svg', import.meta.url).href;
 
@@ -7,6 +8,7 @@ class BlogApp extends LitElement {
   static properties = {
     title: { type: String },
     posts: { type: Array },
+    authors: { type: Array },
   };
 
   static styles = css`
@@ -53,7 +55,7 @@ class BlogApp extends LitElement {
 
   async connectedCallback() {
     super.connectedCallback();
-    /* this.posts = await getPosts() */
+    this.authors = await AuthorService.getAuthors();
   }
 
   handleHightlight(event) {
@@ -66,11 +68,19 @@ class BlogApp extends LitElement {
   }
 
   render() {
+    const htmlAuthors = this.authors.map(
+      author => html`<li>${author.name}</li>`
+    );
+
     return html`
       <header>
         <span>${this.title}</span>
       </header>
       <main>
+        <p>Lista de posts</p>
+        <ul>
+          ${htmlAuthors}
+        </ul>
         <p>Lista de posts</p>
         ${this.posts.map(
           post => html`<blog-post
